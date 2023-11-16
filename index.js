@@ -25,6 +25,27 @@ app.get('/api/nfts/:walletAddress', async (req, res) => {
   }
 });
 
+app.get('/api/nfts/isOwnerOfCollection/:ownerAddress/:collectionAddress', async (req, res) => {
+  try {
+    const collectionAddress = req.params.collectionAddress;
+    const ownerAddress = req.params.ownerAddress;
+    const alchemy = new Alchemy(settings);
+
+    const nfts = await alchemy.nft.verifyNftOwnership(
+      ownerAddress,
+      [collectionAddress]
+    );
+    // Print NFTs
+    console.log(nfts);
+    // Process the response data and send it as a response to the client
+    res.json({ nfts });    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
